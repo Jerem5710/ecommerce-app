@@ -84,6 +84,7 @@ app.post('/logout', (req, res) => {
 const {
     createProduct,
     getProducts,
+    getProductById,
     updateProduct,
     deleteProduct,
 } = require('./products');
@@ -114,6 +115,11 @@ const {
     updateOrderStatus,
 } = require('./orders');
 
+// Import checkout function
+const {
+    checkout,
+} = require('./checkout');
+
 
 // Routes for product CRUD operations
 
@@ -124,17 +130,33 @@ app.get('/', (req, res) => {
 
 // Product routes
 
-// Get all products
+// GET /products?category={categoryId} - Get all products or filter by category
 app.get('/products', async (req, res) => {
     try {
-        const products = await getProducts();
-        console.log('Fetched products:', products);
+        const categoryId = req.query.category || null;
+        const products = await getProducts(categoryId);
         res.json(products);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to fetch products' });
     }
 });
+
+// GET /products/:productId - Get a single product by ID
+app.get('/products/:productId', async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const product = await getProductById(productId);
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+        res.json(product);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch product' });
+    }
+});
+
 
 // Create a new product
 app.post('/products', async (req, res) => {
@@ -356,6 +378,27 @@ app.put('/orders/:orderId/status', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to update order status' });
+    }
+});
+
+// Checkout route
+
+// Example checkout endpoint
+app.post('/cart/:cartId/checkout', async (req, res) => {
+    const cartId = req.params.cartId;
+    const userId = req.user?.id; // Assuming user is authenticated and user info is in req.user
+    const paymentDetails = req.body.paymentDetails;
+
+    if (!userId) {
+        return res.status(401).json({ error: 'User must be logged in to checkout' });
+    }
+
+    try {
+        const order = await checkout(cartId, userId, paymentDetails);
+        res.json({ message: 'Checkout successful', order });
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({ error: err.message || 'Checkout failed' });
     }
 });
 

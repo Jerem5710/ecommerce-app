@@ -4,25 +4,43 @@ const pool = new Pool({
 });
 
 // Create a new product
-async function createProduct(name, description, price, stock) {
+async function createProduct(name, description, price, stock, categoryId = null) {
     const result = await pool.query(
-        'INSERT INTO products (name, description, price, stock) VALUES ($1, $2, $3, $4) RETURNING *',
-        [name, description, price, stock]
+        'INSERT INTO products (name, description, price, stock, categoryId) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [name, description, price, stock, categoryId]
     );
     return result.rows[0];
 }
 
-// Read all products
-async function getProducts() {
+// Read all products or filter by categoryId
+async function getProducts(categoryId = null) {
+    if (categoryId) {
+        const result = await pool.query(
+            'SELECT * FROM products WHERE categoryId = $1',
+            [categoryId]
+        );
+        return result.rows;
+    }
+    else {
     const result = await pool.query('SELECT * FROM products');
-    return result.rows;
+        return result.rows;
+    }
+}
+
+// Read a single product by id 
+async function getProductById(id) {
+    const result = await pool.query(
+        'SELECT * FROM products WHERE id = $1',
+        [id]
+    );
+    return result.rows[0];
 }
 
 // Update a product by id
-async function updateProduct(id, name, description, price, stock) {
+async function updateProduct(id, name, description, price, stock, categoryId = null) {
     const result = await pool.query(
-        'UPDATE products SET name = $1, description = $2, price = $3, stock = $4 WHERE id = $5 RETURNING *',
-        [name, description, price, stock, id]
+        'UPDATE products SET name = $1, description = $2, price = $3, stock = $4, categoryId = $5 WHERE id = $6 RETURNING *',
+        [name, description, price, stock, categoryId, id]
     );
     return result.rows[0];
 }
@@ -35,6 +53,7 @@ async function deleteProduct(id) {
 module.exports = {
     createProduct,
     getProducts,
+    getProductById,
     updateProduct,
     deleteProduct,
 };
