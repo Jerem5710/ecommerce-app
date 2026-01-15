@@ -4,6 +4,11 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const setupSwagger = require('./swagger');
+
+// Call this after creating your Express app and before your routes
+setupSwagger(app); // Initialize swagger documentation
+
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -32,7 +37,90 @@ app.use(passport.session());// Import authentication routes
 
 const bcrypt = require('bcryptjs');
 
+// Import product CRUD functions
+const {
+    createProduct,
+    getProducts,
+    getProductById,
+    updateProduct,
+    deleteProduct,
+} = require('./products');
+
+// Import user CRUD functions
+const {
+    createUser,
+    getUsers,
+    getUserById,
+    updateUser,
+    deleteUser,
+} = require('./users');
+
+// Import cart CRUD functions
+const {
+    createCart,
+    getCartByUserId,
+    addItemToCart,
+    removeItemFromCart,
+    clearCart,
+} = require('./carts');
+
+// Import order CRUD functions
+const {
+    createOrder,
+    addOrderItems,
+    getOrdersByUserId,
+    updateOrderStatus,
+} = require('./orders');
+
+// Import checkout function
+const {
+    checkout,
+} = require('./checkout');
+
 // Registration endpoint
+/**
+ * @swagger
+ * /register:
+ *   post:
+ *     summary: Register a new user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - email
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       400:
+ *         description: Missing required fields
+ *       409:
+ *         description: Username or email already exists
+ *       500:
+ *         description: Server error
+ */
 app.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
@@ -60,6 +148,47 @@ app.post('/register', async (req, res) => {
 });
 
 // Login endpoint
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Login a user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     username:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *       401:
+ *         description: Login failed
+ */
 app.post('/login', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if (err) { return next(err); }
@@ -74,52 +203,20 @@ app.post('/login', (req, res, next) => {
 });
 
 // Logout endpoint
+/**
+ * @swagger
+ * /logout:
+ *   post:
+ *     summary: Logout the current user
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ */
 app.post('/logout', (req, res) => {
     req.logout(() => {
         res.json({ message: 'Logged out successfully' });
     });
 });
-
-// Import product CRUD functions
-const {
-    createProduct,
-    getProducts,
-    getProductById,
-    updateProduct,
-    deleteProduct,
-} = require('./products');
-
-// Import user CRUD functions
-const {
-    createUser,
-    getUsers,
-    getUserById,
-    updateUser,
-    deleteUser,
-} = require('./users'); 
-
-// Import cart CRUD functions
-const {
-    createCart,
-    getCartByUserId,
-    addItemToCart,
-    removeItemFromCart,
-    clearCart,
-} = require('./carts');
-
-// Import order CRUD functions
-const {
-    createOrder,
-    addOrderItems,
-    getOrdersByUserId,
-    updateOrderStatus,
-} = require('./orders');
-
-// Import checkout function
-const {
-    checkout,
-} = require('./checkout');
-
 
 // Routes for product CRUD operations
 
@@ -131,6 +228,40 @@ app.get('/', (req, res) => {
 // Product routes
 
 // GET /products?category={categoryId} - Get all products or filter by category
+/**
+ * @swagger
+ * /products:
+ *   get:
+ *     summary: Retrieve a list of products
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: integer
+ *         description: Category ID to filter products
+ *     responses:
+ *       200:
+ *         description: A list of products.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   name:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *                   price:
+ *                     type: number
+ *                   stock:
+ *                     type: integer
+ *                   category_id:
+ *                     type: integer
+ */
 app.get('/products', async (req, res) => {
     try {
         const categoryId = req.query.category || null;
@@ -143,6 +274,41 @@ app.get('/products', async (req, res) => {
 });
 
 // GET /products/:productId - Get a single product by ID
+/**
+ * @swagger
+ * /products/{productId}:
+ *   get:
+ *     summary: Get a product by ID
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The product ID
+ *     responses:
+ *       200:
+ *         description: A product object
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 price:
+ *                   type: number
+ *                 stock:
+ *                   type: integer
+ *                 category_id:
+ *                   type: integer
+ *       404:
+ *         description: Product not found
+ */
 app.get('/products/:productId', async (req, res) => {
     try {
         const productId = req.params.productId;
@@ -384,6 +550,45 @@ app.put('/orders/:orderId/status', async (req, res) => {
 // Checkout route
 
 // Example checkout endpoint
+/**
+ * @swagger
+ * /cart/{cartId}/checkout:
+ *   post:
+ *     summary: Checkout a cart
+ *     parameters:
+ *       - in: path
+ *         name: cartId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The cart ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               paymentDetails:
+ *                 type: object
+ *                 description: Payment details (simulated)
+ *     responses:
+ *       200:
+ *         description: Checkout successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 order:
+ *                   type: object
+ *       400:
+ *         description: Checkout failed
+ *       401:
+ *         description: Unauthorized
+ */
 app.post('/cart/:cartId/checkout', async (req, res) => {
     const cartId = req.params.cartId;
     const userId = req.user?.id; // Assuming user is authenticated and user info is in req.user
