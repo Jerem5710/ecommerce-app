@@ -8,8 +8,16 @@ const pool = require('./src/config/db'); // Import your configured pool
 
 const setupSwagger = require('./src/docs/swagger');
 
+const cors = require('cors');
+
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// Enable CORS for all routes (you can configure this further for specific origins)
+app.use(cors({
+    origin: 'http://localhost:3000', // Adjust this to your frontend URL
+    credentials: true, // Allow cookies to be sent with requests
+}));
 
 // Session and Passport.js setup for authentication
 const session = require('express-session');

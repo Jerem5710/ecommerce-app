@@ -1,8 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 
 const Header = ({ user, setUser }) => {
+    const { user, setUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleLogout = async () => {
