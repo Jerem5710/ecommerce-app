@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import Checkout from './pages/Checkout';
 
 function App() {
     const addToCart = (product, quantity) => {
@@ -28,7 +29,8 @@ function App() {
                         element={<ProductDetails addToCart={addToCart} />}
                     />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/checkout" element={<Checkout />} />
                     {/* Add routes for login, register, cart, etc. */}
                 </Routes>
                 </Router>

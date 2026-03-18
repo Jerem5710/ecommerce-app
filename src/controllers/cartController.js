@@ -1,4 +1,6 @@
 const cartModel = require('../models/cartModel');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+// Simulate payment processing (replace with real Stripe integration)
 
 exports.createCart = async (req, res) => {
     try {
@@ -58,17 +60,30 @@ exports.clearCart = async (req, res) => {
 exports.checkoutCart = async (req, res) => {
     const cartId = req.params.cartId;
     const userId = req.user?.id;
-    const paymentDetails = req.body.paymentDetails;
+    const paymentDetails = req.body.paymentDetails; // Adjusted to get paymentDetails directly
 
     if (!userId) {
         return res.status(401).json({ error: 'User must be logged in to checkout' });
     }
 
     try {
-        const result = await cartModel.checkoutCart(cartId, userId, paymentDetails);
-        res.json({ message: 'Checkout successful', order: result.order, items: result.items });
+        // Validate or calculate total amount here if needed
+        const amount = paymentDetails.amount; // amount in cents, sent from frontend
+
+        // Create Stripe PaymentIntent
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount,
+            currency: 'usd',
+            metadata: { cartId, userId },
+        });
+
+        // You can optionally save order info here or after payment confirmation
+
+        // Respond with client secret for frontend to confirm payment
+        res.json({ clientSecret: paymentIntent.client_secret });
     } catch (err) {
         console.error(err);
         res.status(400).json({ error: err.message || 'Checkout failed' });
     }
 };
+
