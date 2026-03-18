@@ -23,9 +23,9 @@ exports.getProductById = async (req, res) => {
 };
 
 exports.createProduct = async (req, res) => {
-    const { name, description, price, stock } = req.body;
+    const { name, description, price, stock, image_url } = req.body;
     try {
-        const newProduct = await productModel.createProduct(name, description, price, stock);
+        const newProduct = await productModel.createProduct(name, description, price, stock, image_url);
         res.status(201).json(newProduct);
     } catch (err) {
         console.error(err);
@@ -33,11 +33,12 @@ exports.createProduct = async (req, res) => {
     }
 };
 
+
 exports.updateProduct = async (req, res) => {
     const { id } = req.params;
-    const { name, description, price, stock } = req.body;
+    const { name, description, price, stock, image_url } = req.body;
     try {
-        const updatedProduct = await productModel.updateProduct(id, name, description, price, stock);
+        const updatedProduct = await productModel.updateProduct(id, name, description, price, stock, image_url);
         if (updatedProduct) res.json(updatedProduct);
         else res.status(404).json({ error: 'Product not found' });
     } catch (err) {

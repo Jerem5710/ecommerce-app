@@ -20,10 +20,43 @@ exports.addOrderItems = async (orderId, items) => {
 
 exports.getOrdersByUserId = async (userId) => {
     const result = await pool.query(
-        'SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC',
+        `SELECT 
+       o.id AS order_id,
+       o.created_at AS order_date,
+       o.status,
+       oi.product_id,
+       oi.quantity,
+       oi.price,
+       p.name AS product_name
+     FROM orders o
+     JOIN order_items oi ON o.id = oi.order_id
+     JOIN products p ON oi.product_id = p.id
+     WHERE o.user_id = $1
+     ORDER BY o.created_at DESC`,
         [userId]
     );
-    return result.rows;
+
+    // Group rows by order_id
+    const ordersMap = new Map();
+
+    result.rows.forEach(row => {
+        if (!ordersMap.has(row.order_id)) {
+            ordersMap.set(row.order_id, {
+                id: row.order_id,
+                orderDate: row.order_date,
+                status: row.status,
+                items: [],
+            });
+        }
+        ordersMap.get(row.order_id).items.push({
+            productId: row.product_id,
+            name: row.product_name,
+            quantity: row.quantity,
+            price: row.price,
+        });
+    });
+
+    return Array.from(ordersMap.values());
 };
 
 exports.updateOrderStatus = async (orderId, status) => {

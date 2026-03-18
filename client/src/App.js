@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Checkout from './pages/Checkout';
+import OrderHistory from './pages/OrderHistory';
 
 function App() {
     const addToCart = (product, quantity) => {
@@ -31,6 +32,7 @@ function App() {
                     <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/checkout" element={<Checkout />} />
+                        <Route path="/order-history" element={<OrderHistory />} />
                     {/* Add routes for login, register, cart, etc. */}
                 </Routes>
                 </Router>

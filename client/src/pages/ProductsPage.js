@@ -4,7 +4,7 @@ import ProductList from '../components/ProductList';
 const ProductsPage = () => {
     return (
         <div>
-            <h1>Browse Products</h1>
+            <h1>Welcome {user ? user.username : 'Guest'}! Browse Products</h1>
             <ProductList />
         </div>
     );

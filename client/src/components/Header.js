@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
-const Header = ({ user, setUser }) => {
+const Header = () => {
     const { user, setUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -14,8 +15,8 @@ const Header = ({ user, setUser }) => {
                 {},
                 { withCredentials: true }
             );
-            setUser(null); // Clear user state on frontend
-            navigate('/login'); // Redirect to login page
+            setUser(null);
+            navigate('/login');
         } catch (err) {
             console.error('Logout failed', err);
         }
@@ -25,6 +26,7 @@ const Header = ({ user, setUser }) => {
         <header>
             <nav>
                 {/* Other navigation links */}
+                {user && <Link to="/order-history">Order History</Link>}
                 {user && <button onClick={handleLogout}>Logout</button>}
             </nav>
         </header>

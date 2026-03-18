@@ -60,27 +60,18 @@ exports.clearCart = async (req, res) => {
 exports.checkoutCart = async (req, res) => {
     const cartId = req.params.cartId;
     const userId = req.user?.id;
-    const paymentDetails = req.body.paymentDetails; // Adjusted to get paymentDetails directly
+    const paymentDetails = req.body.paymentDetails;
 
     if (!userId) {
         return res.status(401).json({ error: 'User must be logged in to checkout' });
     }
 
     try {
-        // Validate or calculate total amount here if needed
-        const amount = paymentDetails.amount; // amount in cents, sent from frontend
+        // Delegate full checkout flow to cartModel.checkout
+        const order = await cartModel.checkout(cartId, userId, paymentDetails);
 
-        // Create Stripe PaymentIntent
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount,
-            currency: 'usd',
-            metadata: { cartId, userId },
-        });
-
-        // You can optionally save order info here or after payment confirmation
-
-        // Respond with client secret for frontend to confirm payment
-        res.json({ clientSecret: paymentIntent.client_secret });
+        // Respond with order info (payment handled inside model)
+        res.json({ message: 'Checkout successful', order });
     } catch (err) {
         console.error(err);
         res.status(400).json({ error: err.message || 'Checkout failed' });

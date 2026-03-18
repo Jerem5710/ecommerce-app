@@ -11,6 +11,7 @@ const ProductDetails = () => {
     const [product, setProduct] = useState(null);
     const [error, setError] = useState(null);
     const [quantity, setQuantity] = useState(1);
+    const [loading, setLoading] = useState(false); // Loading state for add-to-cart
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -36,6 +37,11 @@ const ProductDetails = () => {
             alert('Loading cart, please try again shortly.');
             return;
         }
+        if (loading) {
+            // Prevent duplicate submissions
+            return;
+        }
+        setLoading(true);
         try {
             await axios.post(
                 `${process.env.REACT_APP_API_URL}/cart/${cart.id}/items`,
@@ -52,6 +58,8 @@ const ProductDetails = () => {
         } catch (err) {
             console.error('Failed to add item to cart', err);
             alert('Failed to add item to cart');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -80,8 +88,8 @@ const ProductDetails = () => {
                     />
                 </label>
             </div>
-            <button onClick={handleAddToCart} style={{ marginTop: '1rem' }}>
-                Add to Cart
+            <button onClick={handleAddToCart} style={{ marginTop: '1rem' }} disabled={loading}>
+                {loading ? 'Adding...' : 'Add to Cart'}
             </button>
         </div>
     );
