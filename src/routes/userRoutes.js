@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('../config/passportStrategies'); 
 const userController = require('../controllers/userController');
 
 // Registration endpoint
@@ -103,6 +104,34 @@ router.post('/login', userController.login);
  *         description: Logout successful
  */
 router.post('/logout', userController.logout);
+
+// Google OAuth login route
+router.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+// Google OAuth callback route
+router.get('/auth/google/callback',
+    passport.authenticate('google', {
+        failureRedirect: '/login', // Redirect to login on failure
+        successRedirect: '/',       // Redirect to home on success
+        session: true,
+    })
+);
+
+// Facebook OAuth login route
+router.get('/auth/facebook',
+    passport.authenticate('facebook', { scope: ['email'] })
+);
+
+// Facebook OAuth callback route
+router.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
+        failureRedirect: '/login',
+        successRedirect: '/',
+        session: true,
+    })
+);
 
 // User routes
 router.get('/', userController.getAllUsers);

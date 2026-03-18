@@ -37,11 +37,20 @@ exports.login = (req, res, next) => {
     })(req, res, next);
 };
 
-exports.logout = (req, res) => {
-    req.logout(() => {
-        res.json({ message: 'Logged out successfully' });
+exports.logout = (req, res, next) => {
+    req.logout(function (err) {
+        if (err) { return next(err); }
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Session destruction error:', err);
+                return res.status(500).json({ message: 'Logout failed' });
+            }
+            res.clearCookie('connect.sid'); // Clear session cookie
+            res.status(200).json({ message: 'Logged out successfully' });
+        });
     });
 };
+
 
 exports.getAllUsers = async (req, res) => {
     try {
