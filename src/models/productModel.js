@@ -1,17 +1,25 @@
 const pool = require('../config/db');
 
-exports.getProducts = async (categoryId) => {
-    const baseQuery =
-        'SELECT id, name, description, price, stock, image_url, category_id FROM products';
+exports.getProducts = async (categoryId, searchTerm) => {
+    let baseQuery = 'SELECT id, name, description, price, stock, image_url, category_id FROM products';
+    const params = [];
+    const conditions = [];
 
     if (categoryId) {
-        const result = await pool.query(`${baseQuery} WHERE category_id = $1`, [
-            categoryId,
-        ]);
-        return result.rows;
+        params.push(categoryId);
+        conditions.push(`category_id = $${params.length}`);
     }
 
-    const result = await pool.query(baseQuery);
+    if (searchTerm) {
+        params.push(`%${searchTerm.toLowerCase()}%`);
+        conditions.push(`(LOWER(name) LIKE $${params.length} OR LOWER(description) LIKE $${params.length})`);
+    }
+
+    if (conditions.length > 0) {
+        baseQuery += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    const result = await pool.query(baseQuery, params);
     return result.rows;
 };
 

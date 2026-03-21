@@ -6,14 +6,17 @@ import { Link, useLocation } from 'react-router-dom';
 const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
     const location = useLocation();
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(
-                    `${process.env.REACT_APP_API_URL || 'http://localhost:3000'}/products`
-                );
+                const url = new URL(`${process.env.REACT_APP_API_URL || 'http://localhost:3000'}/products`);
+                if (searchTerm) {
+                    url.searchParams.append('search', searchTerm);
+                }
+                const response = await axios.get(url.toString());
                 setProducts(response.data);
             } catch (err) {
                 setError('Failed to load products');
@@ -21,7 +24,7 @@ const ProductList = () => {
         };
 
         fetchProducts();
-    }, []);
+    }, [searchTerm]);
 
     useEffect(() => {
         // Restore scroll position if available
@@ -35,6 +38,37 @@ const ProductList = () => {
     return (
         <div>
             <h2>Products</h2>
+
+            {/* Search input with clear button */}
+            <div style={{ marginBottom: '1rem', position: 'relative', maxWidth: '300px' }}>
+                <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ width: '100%', paddingRight: '24px' }}
+                />
+                {searchTerm && (
+                    <button
+                        onClick={() => setSearchTerm('')}
+                        style={{
+                            position: 'absolute',
+                            right: '4px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                            lineHeight: '1',
+                        }}
+                        aria-label="Clear search"
+                    >
+                        &times;
+                    </button>
+                )}
+            </div>
+
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 {products.map((product) => (
                     <Link

@@ -3,7 +3,8 @@ const productModel = require('../models/productModel');
 exports.getAllProducts = async (req, res) => {
     try {
         const categoryId = req.query.category || null;
-        const products = await productModel.getProducts(categoryId);
+        const searchTerm = req.query.search || null;
+        const products = await productModel.getProducts(categoryId, searchTerm);
         res.json(products);
     } catch (err) {
         console.error(err);
