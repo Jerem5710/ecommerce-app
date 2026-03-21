@@ -11,6 +11,10 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Checkout from './pages/Checkout';
 import OrderHistory from './pages/OrderHistory';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminProductEdit from './pages/admin/AdminProductEdit';
+import AdminProductCreate from './pages/admin/AdminProductCreate';
+import AdminOrders from './pages/admin/AdminOrders';
 
 function App() {
     const addToCart = (product, quantity) => {
@@ -60,6 +64,39 @@ function App() {
                                 </PrivateRoute>
                             }
                         />
+                        {/* Admin routes protected by PrivateRoute with adminOnly */}
+                                <Route
+                                    path="/admin/products"
+                                    element={
+                                        <PrivateRoute adminOnly={true}>
+                                            <AdminProducts />
+                                        </PrivateRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/admin/products/new"
+                                    element={
+                                        <PrivateRoute adminOnly={true}>
+                                            <AdminProductCreate />
+                                        </PrivateRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/admin/products/:productId/edit"
+                                    element={
+                                        <PrivateRoute adminOnly={true}>
+                                            <AdminProductEdit />
+                                        </PrivateRoute>
+                                    }
+                                />
+                                <Route
+                                    path="/admin/orders"
+                                    element={
+                                        <PrivateRoute adminOnly={true}>
+                                            <AdminOrders />
+                                        </PrivateRoute>
+                                    }
+                                />
                     {/* Add routes for login, register, cart, etc. */}
                 </Routes>
                 </Router>

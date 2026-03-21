@@ -59,12 +59,15 @@ const userRoutes = require('./src/routes/userRoutes');
 const productRoutes = require('./src/routes/productRoutes');
 const orderRoutes = require('./src/routes/orderRoutes');
 const cartRoutes = require('./src/routes/cartRoutes');
+const categoryRoutes = require('./src/routes/categoryRoutes');
 
 // Use routes
 app.use('/users', userRoutes);
+app.use('/categories', categoryRoutes);
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 app.use('/carts', cartRoutes);
+
 
 // Start the server
 app.listen(PORT, () => {

@@ -32,7 +32,7 @@ exports.login = (req, res, next) => {
             if (err) return next(err);
             return res.json({
                 message: 'Login successful',
-                user: { id: user.id, username: user.username, email: user.email }
+                user: { id: user.id, username: user.username, email: user.email, isAdmin: user.is_admin }
             });
         });
     })(req, res, next);
@@ -54,7 +54,8 @@ exports.logout = (req, res, next) => {
 
 exports.getCurrentUser = (req, res) => {
     if (req.isAuthenticated()) {
-        res.json({ user: req.user });
+        const { id, username, email, is_admin } = req.user;
+        res.json({ user: { id, username, email, isAdmin: is_admin } });
     } else {
         res.status(401).json({ user: null });
     }

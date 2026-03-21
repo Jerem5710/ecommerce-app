@@ -29,7 +29,11 @@ const Header = () => {
             <nav>
                 {/* Other navigation links */}
                 {user && <Link to="/order-history">Order History</Link>}
-
+                {user?.isAdmin && (
+                    <Link to="/admin/products" style={{ marginLeft: '1rem' }}>
+                        Admin Panel
+                    </Link>
+                )}
                 {user && cartItemsCount > 0 && ( // Show checkout link only if there are items in the cart
                     <Link to="/checkout" style={{ marginLeft: '1rem' }}>
                         Checkout

@@ -66,3 +66,27 @@ exports.updateOrderStatus = async (orderId, status) => {
     );
     return result.rows[0];
 };
+
+exports.getAllOrders = async (userId) => {
+    let query = `
+    SELECT o.id, o.user_id, o.total, o.status, o.created_at,
+           json_agg(json_build_object(
+             'product_id', oi.product_id,
+             'quantity', oi.quantity,
+             'price', oi.price
+           )) AS items
+    FROM orders o
+    LEFT JOIN order_items oi ON o.id = oi.order_id
+  `;
+    const params = [];
+
+    if (userId) {
+        query += ' WHERE o.user_id = $1';
+        params.push(userId);
+    }
+
+    query += ' GROUP BY o.id ORDER BY o.created_at DESC';
+
+    const result = await pool.query(query, params);
+    return result.rows;
+};

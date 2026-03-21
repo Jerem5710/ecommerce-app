@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
+const isAuthenticated = require('../middleware/isAuthenticated');
+const isAdmin = require('../middleware/isAdmin');
 
 /**
  * @swagger
@@ -59,7 +61,7 @@ router.get('/:productId', productController.getProductById);
  *       201: { description: Product created successfully }
  *       500: { description: Server error }
  */
-router.post('/', productController.createProduct);
+router.post('/', isAuthenticated, isAdmin, productController.createProduct);
 
 /**
  * @swagger
@@ -87,7 +89,7 @@ router.post('/', productController.createProduct);
  *       404: { description: Product not found }
  *       500: { description: Server error }
  */
-router.put('/:id', productController.updateProduct);
+router.put('/:id', isAuthenticated, isAdmin, productController.updateProduct);
 
 /**
  * @swagger
@@ -103,6 +105,6 @@ router.put('/:id', productController.updateProduct);
  *       204: { description: Product deleted successfully }
  *       500: { description: Server error }
  */
-router.delete('/:id', productController.deleteProduct);
+router.delete('/:id', isAuthenticated, isAdmin, productController.deleteProduct);
 
 module.exports = router;
