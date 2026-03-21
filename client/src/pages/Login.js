@@ -1,31 +1,49 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import authService from '../services/authService';
+import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
+    console.log('API URL:', process.env.REACT_APP_API_URL);
+
+    const { user, setUser } = useContext(AuthContext);
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState(null);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (user) {
+            navigate('/products');
+        }
+    }, [user, navigate]);
+
+    // Check for error query param on mount
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get('error') === 'google_failed') {
+            setError('Google login failed. Please try again.');
+        }
+    }, [location]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         try {
-            await authService.login({ username, password });
-            // After successful login, navigate to home or dashboard
-            navigate('/');
+            const data = await authService.login({ username, password });
+            setUser(data.user);  // Update user in context
+            navigate('/products');
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed');
         }
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:3000'}/auth/google`;
+        window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:3000'}/users/auth/google`;
     };
 
     const handleFacebookLogin = () => {
-        window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:3000'}/auth/facebook`;
+        window.location.href = `${process.env.REACT_APP_API_URL || 'http://localhost:3000'}/users/auth/facebook`;
     };
 
     return (

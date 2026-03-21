@@ -1,5 +1,6 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcryptjs');
+const passport = require('../config/passportStrategies');
 
 exports.register = async (req, res) => {
     const { username, email, password } = req.body;
@@ -12,7 +13,7 @@ exports.register = async (req, res) => {
 
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
-        const newUser = await userModel.create(username, email, passwordHash);
+        const newUser = await userModel.createUser(username, email, passwordHash);
 
         res.status(201).json(newUser);
     } catch (err) {
@@ -51,6 +52,13 @@ exports.logout = (req, res, next) => {
     });
 };
 
+exports.getCurrentUser = (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json({ user: req.user });
+    } else {
+        res.status(401).json({ user: null });
+    }
+};
 
 exports.getAllUsers = async (req, res) => {
     try {

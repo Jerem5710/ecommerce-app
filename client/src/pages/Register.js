@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import authService from '../services/authService';
+import { AuthContext } from '../context/AuthContext';
 
 const Register = () => {
+    const { user } = useContext(AuthContext);
     const [username, setUsername] = React.useState('');
+    const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [error, setError] = React.useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            navigate('/products');
+        }
+    }, [user, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         try {
-            await authService.register({ username, password });
-            // After successful registration, navigate to home or dashboard
-            navigate('/');
+            await authService.register({ username, email, password });
+            navigate('/products');
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed');
         }
@@ -30,6 +38,15 @@ const Register = () => {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Email:</label>
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                     />
                 </div>

@@ -8,38 +8,44 @@ export const CartProvider = ({ children }) => {
     const { user } = useContext(AuthContext);
     const [cart, setCart] = useState(null);
 
-    useEffect(() => {
-        const fetchOrCreateCart = async () => {
-            if (!user) {
-                setCart(null);
-                return;
+    // Define fetchOrCreateCart as a reusable function
+    const fetchOrCreateCart = async () => {
+        if (!user) {
+            console.log('No user, clearing cart');
+            setCart(null);
+            return;
+        }
+        try {
+            console.log('Fetching cart for user:', user.id);
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/carts/${user.id}`, {
+                withCredentials: true,
+            });
+            console.log('Cart fetched successfully:', res.data);
+            setCart(res.data);
+        } catch (err) {
+            if (err.response && err.response.status === 404) {
+                console.log('No cart found, creating one for user:', user.id);
+                const createRes = await axios.post(
+                    `${process.env.REACT_APP_API_URL}/carts`,
+                    { userId: user.id },
+                    { withCredentials: true }
+                );
+                console.log('Cart created:', createRes.data);
+                setCart(createRes.data);
+            } else {
+                console.error('Failed to fetch or create cart', err);
             }
-            try {
-                // Try to get existing cart
-                const res = await axios.get(`${process.env.REACT_APP_API_URL}/cart/${user.id}`, {
-                    withCredentials: true,
-                });
-                setCart(res.data);
-            } catch (err) {
-                if (err.response && err.response.status === 404) {
-                    // No cart found, create one
-                    const createRes = await axios.post(
-                        `${process.env.REACT_APP_API_URL}/cart`,
-                        { userId: user.id },
-                        { withCredentials: true }
-                    );
-                    setCart(createRes.data);
-                } else {
-                    console.error('Failed to fetch or create cart', err);
-                }
-            }
-        };
+        }
+    };
 
+    // Call fetchOrCreateCart on user change
+    useEffect(() => {
         fetchOrCreateCart();
     }, [user]);
 
+    // Expose refreshCart function to allow manual cart refresh
     return (
-        <CartContext.Provider value={{ cart, setCart }}>
+        <CartContext.Provider value={{ cart, setCart, refreshCart: fetchOrCreateCart }}>
             {children}
         </CartContext.Provider>
     );

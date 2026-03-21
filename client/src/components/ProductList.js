@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Product from './Product';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [error, setError] = useState(null);
+    const location = useLocation();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -22,6 +23,13 @@ const ProductList = () => {
         fetchProducts();
     }, []);
 
+    useEffect(() => {
+        // Restore scroll position if available
+        if (location.state && location.state.scrollPosition) {
+            window.scrollTo(0, location.state.scrollPosition);
+        }
+    }, [location.state]);
+
     if (error) return <p>{error}</p>;
 
     return (
@@ -32,6 +40,7 @@ const ProductList = () => {
                     <Link
                         key={product.id}
                         to={`/products/${product.id}`}
+                        state={{ scrollPosition: window.pageYOffset }}
                         style={{ textDecoration: 'none', color: 'inherit' }}
                     >
                         <Product product={product} />

@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { CartContext } from '../context/CartContext';
 
 const Header = () => {
     const { user, setUser } = useContext(AuthContext);
+    const { cart } = useContext(CartContext);
+    const cartItemsCount = cart?.items?.length || 0; // Calculate total items in cart
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -27,6 +29,12 @@ const Header = () => {
             <nav>
                 {/* Other navigation links */}
                 {user && <Link to="/order-history">Order History</Link>}
+
+                {user && cartItemsCount > 0 && ( // Show checkout link only if there are items in the cart
+                    <Link to="/checkout" style={{ marginLeft: '1rem' }}>
+                        Checkout
+                    </Link>
+                )}
                 {user && <button onClick={handleLogout}>Logout</button>}
             </nav>
         </header>

@@ -113,8 +113,9 @@ router.get('/auth/google',
 // Google OAuth callback route
 router.get('/auth/google/callback',
     passport.authenticate('google', {
-        failureRedirect: '/login', // Redirect to login on failure
-        successRedirect: '/',       // Redirect to home on success
+        failureRedirect: '/login?error=google_failed', // Redirect to login on failure
+        failureMessage: true,  // enable failure messages
+        successRedirect: 'http://localhost:3001/products',       // Redirect to home on success
         session: true,
     })
 );
@@ -128,16 +129,18 @@ router.get('/auth/facebook',
 router.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
         failureRedirect: '/login',
-        successRedirect: '/',
+        successRedirect: 'http://localhost:3001/products',
         session: true,
     })
 );
 
 // User routes
 router.get('/', userController.getAllUsers);
+router.get('/me', userController.getCurrentUser); // New route to get current authenticated user
 router.get('/:id', userController.getUserById);
 router.post('/', userController.createUser);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
+
 
 module.exports = router;

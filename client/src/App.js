@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute';
 
 import Header from './components/Header';
 import ProductsPage from './pages/ProductsPage';
@@ -23,16 +24,42 @@ function App() {
             <Router>
                 <Header />
                 <Routes>
-                    <Route path="/" element={<Navigate to="/products" />} />
-                    <Route path="/products" element={<ProductsPage />} />
-                    <Route
-                        path="/products/:productId"
-                        element={<ProductDetails addToCart={addToCart} />}
-                    />
-                    <Route path="/login" element={<Login />} />
+                        <Route path="/" element={<Navigate to="/products" />} />
+
+                        <Route
+                            path="/products"
+                            element={
+                                <PrivateRoute>
+                                    <ProductsPage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/products/:productId"
+                            element={
+                                <PrivateRoute>
+                                    <ProductDetails addToCart={addToCart} />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
-                        <Route path="/checkout" element={<Checkout />} />
-                        <Route path="/order-history" element={<OrderHistory />} />
+                        <Route
+                            path="/checkout"
+                            element={
+                                <PrivateRoute>
+                                    <Checkout />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/order-history"
+                            element={
+                                <PrivateRoute>
+                                    <OrderHistory />
+                                </PrivateRoute>
+                            }
+                        />
                     {/* Add routes for login, register, cart, etc. */}
                 </Routes>
                 </Router>

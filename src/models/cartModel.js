@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Create a new cart for a user
 exports.createCart = async (userId) => {
@@ -78,26 +79,37 @@ const validateCart = async (cartId) => {
     if (cartRes.rows.length === 0) {
         throw new Error('Cart not found');
     }
-    const itemsRes = await pool.query('SELECT * FROM cart_items WHERE cart_id = $1', [cartId]);
+    const itemsRes = await pool.query(
+        `SELECT ci.id, ci.quantity, p.id AS product_id, p.name, p.description, p.price
+         FROM cart_items ci
+         JOIN products p ON ci.product_id = p.id
+         WHERE ci.cart_id = $1`,
+        [cartId]
+    );
     if (itemsRes.rows.length === 0) {
         throw new Error('Cart is empty');
     }
     return { cart: cartRes.rows[0], items: itemsRes.rows };
 };
 
+
 // Create order and order items after successful payment
 const createOrder = async (userId, cartId, items) => {
     const client = await pool.connect();
+    const total = items.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
     try {
         await client.query('BEGIN');
 
         const orderRes = await client.query(
-            'INSERT INTO orders (user_id, status, created_at) VALUES ($1, $2, NOW()) RETURNING *',
-            [userId, 'paid']
+            'INSERT INTO orders (user_id, total, status, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
+            [userId, total, 'paid']
         );
         const order = orderRes.rows[0];
 
         for (const item of items) {
+            if (item.price == null) {
+                throw new Error(`Missing price for product_id ${item.product_id}`);
+            }
             await client.query(
                 'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
                 [order.id, item.product_id, item.quantity, item.price]
@@ -122,6 +134,22 @@ exports.checkout = async (cartId, userId, paymentDetails) => {
     // Validate cart and items
     const { cart, items } = await validateCart(cartId);
 
+    // Calculate total amount in cents
+    const total = items.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
+    const amountInCents = Math.round(total * 100);
+
+    console.log('Starting checkout for cartId:', cartId, 'userId:', userId);
+    console.log('Payment details:', paymentDetails);
+
+    // Create Stripe PaymentIntent
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount: amountInCents,
+        currency: 'usd', // or your currency
+        // optionally, you can add metadata or receipt_email here
+    });
+
+    console.log('Stripe payment intent created:', paymentIntent);
+
     // Process payment (simulate)
     const paymentSuccess = await processPayment(paymentDetails);
     if (!paymentSuccess) {
@@ -130,5 +158,5 @@ exports.checkout = async (cartId, userId, paymentDetails) => {
 
     // Create order
     const order = await createOrder(userId, cartId, items);
-    return order;
+    return { order, clientSecret: paymentIntent.client_secret };
 };

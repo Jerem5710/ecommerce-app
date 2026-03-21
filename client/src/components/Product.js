@@ -1,6 +1,10 @@
 import React from 'react';
 
 const Product = ({ product }) => {
+    // Convert price to number safely, fallback to 0 if invalid
+    const price = Number(product.price);
+    const displayPrice = isNaN(price) ? 'N/A' : price.toFixed(2);
+
     return (
         <div style={{ border: '1px solid #ddd', padding: '1rem', margin: '1rem', maxWidth: '220px' }}>
             <img
@@ -10,7 +14,7 @@ const Product = ({ product }) => {
             />
             <h3>{product.name}</h3>
             <p>{product.description}</p>
-            <p><strong>Price:</strong> ${product.price.toFixed(2)}</p>
+            <p><strong>Price:</strong> ${displayPrice}</p>
         </div>
     );
 };

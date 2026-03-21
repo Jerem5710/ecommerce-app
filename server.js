@@ -14,9 +14,23 @@ const cors = require('cors');
 app.use(express.json());
 
 // Enable CORS for all routes (you can configure this further for specific origins)
-app.use(cors({
+/*app.use(cors({
     origin: 'http://localhost:3000', // Adjust this to your frontend URL
     credentials: true, // Allow cookies to be sent with requests
+}));*/
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true,
 }));
 
 // Session and Passport.js setup for authentication

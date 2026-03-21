@@ -16,7 +16,13 @@ const login = async (userData) => {
     return response.data;
 };
 
+const getCurrentUser = async () => {
+    const response = await axios.get(`${API_URL}/users/me`, { withCredentials: true });
+    return response.data.user;
+};
+
 export default {
     register,
-    login
+    login,
+    getCurrentUser,
 };
