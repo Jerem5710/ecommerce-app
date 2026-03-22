@@ -115,6 +115,15 @@ const createOrder = async (userId, cartId, items) => {
                 [order.id, item.product_id, item.quantity, item.price]
             );
         }
+        // Query inserted order items and attach to order
+        const itemsRes = await client.query(
+            `SELECT oi.product_id as id, oi.quantity, oi.price, p.name
+       FROM order_items oi
+       JOIN products p ON oi.product_id = p.id
+       WHERE oi.order_id = $1`,
+            [order.id]
+        );
+        order.items = itemsRes.rows;
 
         // Optionally clear the cart here or mark it as checked out
         await client.query('DELETE FROM cart_items WHERE cart_id = $1', [cartId]);
@@ -148,14 +157,13 @@ exports.checkout = async (cartId, userId, paymentDetails) => {
         // optionally, you can add metadata or receipt_email here
     });
 
-    console.log('Stripe payment intent created:', paymentIntent);
+    console.log('Stripe payment intent created and confirmed:', paymentIntent);
 
     // Process payment (simulate)
     const paymentSuccess = await processPayment(paymentDetails);
     if (!paymentSuccess) {
         throw new Error('Payment failed');
-    }
-
+    }   
     // Create order
     const order = await createOrder(userId, cartId, items);
     return { order, clientSecret: paymentIntent.client_secret };

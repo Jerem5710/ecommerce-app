@@ -1,6 +1,7 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const passport = require('../config/passportStrategies');
+const emailService = require('../utils/emailService');
 
 exports.register = async (req, res) => {
     const { username, email, password } = req.body;
@@ -14,6 +15,19 @@ exports.register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
         const newUser = await userModel.createUser(username, email, passwordHash);
+
+        await emailService.sendEmail(
+            newUser.email,
+            'Welcome to Our Store!',
+            'registration',
+            {
+                logoUrl: 'https://yourstore.com/logo.png',
+                username: newUser.username,
+                contactEmail: 'info@store.com',
+                contactPhone: '123-456-7890',
+                address: '123 Store St, City, Country',
+            }
+        );
 
         res.status(201).json(newUser);
     } catch (err) {

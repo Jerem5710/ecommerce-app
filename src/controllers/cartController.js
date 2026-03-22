@@ -1,6 +1,7 @@
 const cartModel = require('../models/cartModel');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 // Simulate payment processing (replace with real Stripe integration)
+const emailService = require('../utils/emailService');
 
 exports.createCart = async (req, res) => {
     try {
@@ -76,8 +77,37 @@ exports.checkoutCart = async (req, res) => {
     }
 
     try {
+        console.log('Starting checkout process for user:', userId, 'cart:', cartId);
         const { order, clientSecret } = await cartModel.checkout(cartId, userId, paymentDetails);
+        console.log('Checkout order:', order);
+        // Prepare order details string for email
+        if (!order || !order.items || !Array.isArray(order.items) || order.items.length === 0) {
+            return res.status(400).json({ error: 'Order creation failed or no items in order' });
+        }
+        const orderDetails = order.items
+            .map(item => `${item.name} - $${parseFloat(item.price).toFixed(2)}`)
+            .join('<br>');
 
+        // Send purchase confirmation email
+        try {
+            await emailService.sendEmail(
+                req.user.email,
+                'Thank you for your purchase!',
+                'checkout',
+                {
+                    logoUrl: 'https://yourstore.com/logo.png',
+                    username: req.user.username,
+                    orderDetails,
+                    contactEmail: 'info@store.com',
+                    contactPhone: '123-456-7890',
+                    address: '123 Store St, City, Country',
+                }
+            );
+            console.log('Purchase confirmation email sent successfully to', req.user.email);
+        } catch (emailErr) {
+            console.error('Failed to send purchase confirmation email:', emailErr);
+            // Optionally continue without blocking response
+        }
         res.json({ message: 'Checkout initiated', order, clientSecret });
     } catch (err) {
         console.error(err);

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif, sans-serif;
+            background-color: #ffffff;
+            color: #333333;
+            margin: 0;
+            padding: 20px;
+        }
+    
+        .email-container {
+            max-width: 600px;
+            margin: auto;
+            border: 1px solid #dddddd;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+    
+        img.logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+            display: block;
+        }
+    
+        h2 {
+            color: #222222;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+    
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+    
+        .order-details {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+    
+        .contact-info {
+            font-size: 14px;
+            color: #666666;
+            border-top: 1px solid #dddddd;
+            padding-top: 15px;
+            margin-top: 20px;
+        }
+    
+        a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+    
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <img src="{{logoUrl}}" alt="Store Logo" class="logo" />
+        <h2>Thank you for your purchase, {{username}}!</h2>
+        <p>We appreciate your order. Here are the details of your purchase:</p>
+        <div class="order-details">
+            {{orderDetails}} <!-- e.g. list of product names and prices -->
+        </div>
+        <p>If you have any questions, feel free to contact us at <a href="mailto:{{contactEmail}}">{{contactEmail}}</a> or
+            call {{contactPhone}}.</p>
+        <p>Visit us at: {{address}}</p>
+        <div class="contact-info">
+            &copy; 2024 Your Store Name. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
