@@ -33,3 +33,14 @@ exports.updateOrderStatus = async (req, res) => {
         res.status(500).json({ error: 'Failed to update order status' });
     }
 };
+
+exports.getAllOrders = async (req, res) => {
+    try {
+        const userIdFilter = req.query.userId || null;
+        const orders = await orderModel.getAllOrders(userIdFilter);
+        res.json(orders);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch orders' });
+    }
+};

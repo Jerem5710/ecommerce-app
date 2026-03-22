@@ -3,6 +3,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const pool = require('./db'); // adjust path if needed
 const bcrypt = require('bcryptjs');
+const emailService = require('../utils/emailService'); // adjust path if needed
 
 // Helper function to find or create user
 async function findOrCreateUser(profile, done) {
@@ -13,6 +14,7 @@ async function findOrCreateUser(profile, done) {
         // Check if user exists by email
         const res = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         let user = res.rows[0];
+        let isNewUser = false;
 
         if (!user) {
             // Create new user with a random password hash (or null)
@@ -25,8 +27,22 @@ async function findOrCreateUser(profile, done) {
                 [username, email, passwordHash]
             );
             user = insertRes.rows[0];
+            isNewUser = true;
         }
-
+        if (isNewUser) {
+            await emailService.sendEmail(
+                user.email,
+                'Welcome to Our Store!',
+                'registration',
+                {
+                    logoUrl: 'https://yourstore.com/logo.png',
+                    username: user.username || user.email,
+                    contactEmail: 'info@store.com',
+                    contactPhone: '123-456-7890',
+                    address: '123 Store St, City, Country',
+                }
+            );
+        }
         done(null, user);
     } catch (err) {
         done(err, null);

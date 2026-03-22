@@ -3,7 +3,8 @@ const productModel = require('../models/productModel');
 exports.getAllProducts = async (req, res) => {
     try {
         const categoryId = req.query.category || null;
-        const products = await productModel.getProducts(categoryId);
+        const searchTerm = req.query.search || null;
+        const products = await productModel.getProducts(categoryId, searchTerm);
         res.json(products);
     } catch (err) {
         console.error(err);
@@ -23,9 +24,16 @@ exports.getProductById = async (req, res) => {
 };
 
 exports.createProduct = async (req, res) => {
-    const { name, description, price, stock, image_url } = req.body;
+    const { name, description, price, stock, image_url, category_id } = req.body;
     try {
-        const newProduct = await productModel.createProduct(name, description, price, stock, image_url);
+        const newProduct = await productModel.createProduct(
+            name,
+            description,
+            price,
+            stock,
+            image_url,
+            category_id
+        );
         res.status(201).json(newProduct);
     } catch (err) {
         console.error(err);
@@ -33,12 +41,19 @@ exports.createProduct = async (req, res) => {
     }
 };
 
-
 exports.updateProduct = async (req, res) => {
     const { id } = req.params;
-    const { name, description, price, stock, image_url } = req.body;
+    const { name, description, price, stock, image_url, category_id } = req.body;
     try {
-        const updatedProduct = await productModel.updateProduct(id, name, description, price, stock, image_url);
+        const updatedProduct = await productModel.updateProduct(
+            id,
+            name,
+            description,
+            price,
+            stock,
+            image_url,
+            category_id
+        );
         if (updatedProduct) res.json(updatedProduct);
         else res.status(404).json({ error: 'Product not found' });
     } catch (err) {

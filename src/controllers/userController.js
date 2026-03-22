@@ -1,6 +1,7 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const passport = require('../config/passportStrategies');
+const emailService = require('../utils/emailService');
 
 exports.register = async (req, res) => {
     const { username, email, password } = req.body;
@@ -14,6 +15,19 @@ exports.register = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
         const newUser = await userModel.createUser(username, email, passwordHash);
+
+        await emailService.sendEmail(
+            newUser.email,
+            'Welcome to Our Store!',
+            'registration',
+            {
+                logoUrl: 'https://yourstore.com/logo.png',
+                username: newUser.username,
+                contactEmail: 'info@store.com',
+                contactPhone: '123-456-7890',
+                address: '123 Store St, City, Country',
+            }
+        );
 
         res.status(201).json(newUser);
     } catch (err) {
@@ -32,7 +46,7 @@ exports.login = (req, res, next) => {
             if (err) return next(err);
             return res.json({
                 message: 'Login successful',
-                user: { id: user.id, username: user.username, email: user.email }
+                user: { id: user.id, username: user.username, email: user.email, isAdmin: user.is_admin }
             });
         });
     })(req, res, next);
@@ -54,7 +68,8 @@ exports.logout = (req, res, next) => {
 
 exports.getCurrentUser = (req, res) => {
     if (req.isAuthenticated()) {
-        res.json({ user: req.user });
+        const { id, username, email, is_admin } = req.user;
+        res.json({ user: { id, username, email, isAdmin: is_admin } });
     } else {
         res.status(401).json({ user: null });
     }
