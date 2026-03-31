@@ -1,0 +1,135 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 40px;
+    display: flex;    
+}
+
+.menu-icon {
+    display: none;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin: 0;
+}
+
+.dropdown {
+    display: none; /* hide dropdown by default */
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    width: 100%;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+}
+
+/* Default: show nav-links, hide menu icon */
+.nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-link,
+.nav-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: #333;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-button:hover,
+.nav-link:focus,
+.nav-button:focus {
+    background-color: #f0f0f0;
+    outline: none;
+}
+
+.icon {
+    height: 20px;
+    width: 20px;
+    fill: currentColor;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .logo-link {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Hide nav links on mobile, show menu icon */
+@media (max-width: 600px) {
+    .nav-links {
+        display: none;
+    }
+
+    .menu-icon {
+        display: block;
+        margin-left: auto; /* keeps it aligned to the right if needed */
+        margin-top: 0;    
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 60px; /* just below header */
+        left: 0;
+        right: 0;
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        z-index: 999;
+    }
+
+    .dropdown a,
+    .dropdown button {
+        text-decoration: none;
+        color: #0070f3;
+        font-weight: 600;
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .dropdown a:hover,
+    .dropdown button:hover {
+        color: #005bb5;
+    }
+}

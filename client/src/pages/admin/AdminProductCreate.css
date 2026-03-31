@@ -1,0 +1,119 @@
+.admin-product-create-page {
+    max-width: 480px;
+    margin: 4rem auto;
+    padding: 1rem 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #222;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.page-heading {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.error-message {
+    color: #d93025;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    color: #444;
+    font-size: 1rem;
+}
+
+.input-field,
+.textarea-field,
+.select-field {
+    margin-top: 0.3rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.input-field:focus,
+.textarea-field:focus,
+.select-field:focus {
+    border-color: #0070f3;
+    box-shadow: 0 0 6px rgba(0, 112, 243, 0.5);
+    outline: none;
+}
+
+.textarea-field {
+    min-height: 80px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: inherit;
+}
+
+.save-btn {
+    background-color: #0070f3;
+    color: white;
+    flex: 1;
+}
+
+.save-btn:hover,
+.save-btn:focus {
+    background-color: #005bb5;
+    box-shadow: 0 0 8px rgba(0, 91, 181, 0.7);
+    outline: none;
+}
+
+.save-btn:disabled {
+    background-color: #a0c4ff;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.cancel-btn {
+    background-color: #666;
+    color: white;
+    flex: 1;
+}
+
+.cancel-btn:hover,
+.cancel-btn:focus {
+    background-color: #444;
+    box-shadow: 0 0 8px rgba(68, 68, 68, 0.7);
+    outline: none;
+}
+
+.cancel-btn:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+    box-shadow: none;
+}

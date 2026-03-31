@@ -1,20 +1,24 @@
 import React from 'react';
+import './Product.css';
 
 const Product = ({ product }) => {
-    // Convert price to number safely, fallback to 0 if invalid
     const price = Number(product.price);
     const displayPrice = isNaN(price) ? 'N/A' : price.toFixed(2);
 
     return (
-        <div style={{ border: '1px solid #ddd', padding: '1rem', margin: '1rem', maxWidth: '220px' }}>
+        <div className="user-product-card">
             <img
                 src={product.image_url}
                 alt={product.name}
-                style={{ maxWidth: '200px', height: 'auto', objectFit: 'contain' }}
+                className="product-image"
             />
-            <h3>{product.name}</h3>
-            <p>{product.description}</p>
-            <p><strong>Price:</strong> ${displayPrice}</p>
+            <div className="product-info">
+                <h3 className="product-name">{product.name}</h3>
+                <p className="product-description">{product.description}</p>
+                <p className="product-price">
+                    <strong>Price:</strong> ${displayPrice}
+                </p>
+            </div>
         </div>
     );
 };

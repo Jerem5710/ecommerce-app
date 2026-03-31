@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
+import './AdminProducts.css';
 
 const AdminProducts = () => {
     const [products, setProducts] = useState([]);
@@ -42,28 +44,32 @@ const AdminProducts = () => {
         fetchProducts();
     }, [selectedCategory]);
 
-    if (error) return <p>{error}</p>;
+    if (error) return <p className="error-message">{error}</p>;
 
     return (
-        <div style={{ padding: '1rem' }}>
-            <h1>Admin Products</h1>
+        <div className="admin-products-page">
+            <h1 className="page-title">Click any Product to edit</h1>
 
-            <button onClick={() => navigate('/products')} style={{ marginRight: '1rem' }}>
-                Back to Products Page
-            </button>
-            <button onClick={() => navigate('/admin/products/new')} style={{ marginBottom: '1rem' }}>
-                Create New Product
-            </button>
-            <button onClick={() => navigate('/admin/orders')}>Go to Admin Orders</button>
+            <div className="top-buttons">
+                <button onClick={() => navigate('/products')} className="btn back-btn">
+                    Back to Products Page
+                </button>
+                <button onClick={() => navigate('/admin/products/new')} className="btn create-btn">
+                    Create New Product
+                </button>
+                <button onClick={() => navigate('/admin/orders')} className="btn orders-btn">
+                    Go to Admin Orders
+                </button>
+            </div>
 
             {/* Category filter dropdown with Clear button */}
-            <div style={{ display: 'flex', alignItems: 'center', margin: '1rem 0' }}>
-                <label htmlFor="categoryFilter" style={{ marginRight: '0.5rem' }}>Filter by Category:</label>
+            <div className="filter-container">
+                <label htmlFor="categoryFilter" className="filter-label">Filter by Category:</label>
                 <select
                     id="categoryFilter"
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    style={{ marginRight: '0.5rem' }}
+                    className="filter-select"
                 >
                     <option value="">All Categories</option>
                     {categories.map((cat) => (
@@ -72,37 +78,31 @@ const AdminProducts = () => {
                         </option>
                     ))}
                 </select>
-                <button onClick={() => setSelectedCategory('')}>Clear</button>
+                <button onClick={() => setSelectedCategory('')} className="btn clear-filter-btn">
+                    Clear
+                </button>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            <div className="admin-products-grid">
                 {products.map((product) => (
-                    <div
-                        key={product.id}
-                        style={{
-                            border: '1px solid #ddd',
-                            padding: '1rem',
-                            margin: '0.5rem',
-                            maxWidth: '220px',
-                            position: 'relative',
-                        }}
-                    >
-                        <img
-                            src={product.image_url}
-                            alt={product.name}
-                            style={{ maxWidth: '200px', height: 'auto', objectFit: 'contain' }}
-                        />
-                        <h3>{product.name}</h3>
-                        <p>{product.description}</p>
-                        <p>
-                            <strong>Price:</strong> ${Number(product.price).toFixed(2)}
-                        </p>
+                    <div key={product.id} className="product-card">
                         <button
                             onClick={() => navigate(`/admin/products/${product.id}/edit`)}
-                            style={{ position: 'absolute', top: '10px', right: '10px' }}
+                            className="edit-btn"
+                            aria-label={`Edit ${product.name}`}
                         >
                             Edit
                         </button>
+                        <img
+                            src={product.image_url}
+                            alt={product.name}
+                            className="product-image"
+                        />
+                        <h3 className="product-name">{product.name}</h3>
+                        <p className="product-description">{product.description}</p>
+                        <p className="product-price">
+                            <strong>Price:</strong> ${Number(product.price).toFixed(2)}
+                        </p>
                     </div>
                 ))}
             </div>

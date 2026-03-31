@@ -3,6 +3,8 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
+import './OrderHistory.css';
+
 const OrderHistory = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -42,21 +44,21 @@ const OrderHistory = () => {
         }
     };
 
-    if (loading) return <p>Loading your orders...</p>;
-    if (error) return <p>{error}</p>;
-    if (!orders.length) return <p>You have no past orders.</p>;
+    if (loading) return <p className="loading-text">Loading your orders...</p>;
+    if (error) return <p className="error-text">{error}</p>;
+    if (!orders.length) return <p className="empty-text">You have no past orders.</p>;
 
     return (
-        <div>
-            <button onClick={handleBack} style={{ marginBottom: '1rem' }}>Back</button>
-            <h2>Your Order History</h2>
+        <div className="order-history-page">
+            <button onClick={handleBack} className="back-button">Back</button>
+            <h2 className="page-heading">Your Order History</h2>
             {orders.map(order => (
-                <div key={order.id} style={{ border: '1px solid #ccc', marginBottom: '1rem', padding: '1rem' }}>
+                <div key={order.id} className="order-card">
                     <p><strong>Order ID:</strong> {order.id}</p>
                     <p><strong>Date:</strong> {new Date(order.orderDate).toLocaleDateString()}</p>
                     <p><strong>Status:</strong> {order.status}</p>
                     <h4>Items:</h4>
-                    <ul>
+                    <ul className="order-items-list">
                         {order.items.map(item => (
                             <li key={item.productId}>
                                 {item.name} x {item.quantity} @ ${Number(item.price).toFixed(2)}

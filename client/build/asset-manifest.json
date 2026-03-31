@@ -1,0 +1,28 @@
+{
+  "files": {
+    "main.css": "/static/css/main.141c2d13.css",
+    "main.js": "/static/js/main.fa76bc03.js",
+    "static/media/Luigi-Jer.svg": "/static/media/Luigi-Jer.e43babbc1e45f1d3d01c864618c54aee.svg",
+    "static/media/Luigi-Jer.png": "/static/media/Luigi-Jer.814ec2f310d129c92253.png",
+    "static/media/order.svg": "/static/media/order.207ce2b7fdc3c2cb9a136015e49df9b6.svg",
+    "static/media/add-to-cart.svg": "/static/media/add-to-cart.50f3acff6712afb6c030e532e0a102b1.svg",
+    "static/media/icon-admin.svg": "/static/media/icon-admin.a6b36c4515cdf9a0381f870c875e47c5.svg",
+    "static/media/full-cart.svg": "/static/media/full-cart.45a37148abb382a010f4cfc151307205.svg",
+    "static/media/register.svg": "/static/media/register.aa8bed3b43643cf193dcd81a091c6291.svg",
+    "static/media/google.svg": "/static/media/google.e7f7e724956e2e876e24e8fc53bbd476.svg",
+    "static/media/dollar.svg": "/static/media/dollar.8ac3079a1de6b35d4aa488e175d47087.svg",
+    "static/media/login.svg": "/static/media/login.5f1b3ce46f6ae001871095b44e92b2d2.svg",
+    "static/media/logout.svg": "/static/media/logout.1fa52a5da9b241deed4562ee2fa3b6dd.svg",
+    "static/media/close.svg": "/static/media/close.c08252315ee673e159a5fc50c223ab79.svg",
+    "static/media/cart-empty.svg": "/static/media/cart-empty.64f9dc85ab17286ca537aa784b3ec5d0.svg",
+    "static/media/facebook.svg": "/static/media/facebook.96ee55b3545533ca11d1e9e740a7a384.svg",
+    "static/media/search.svg": "/static/media/search.fb9b835276a50d54cf9b22832c82bf97.svg",
+    "index.html": "/index.html",
+    "main.141c2d13.css.map": "/static/css/main.141c2d13.css.map",
+    "main.fa76bc03.js.map": "/static/js/main.fa76bc03.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.141c2d13.css",
+    "static/js/main.fa76bc03.js"
+  ]
+}

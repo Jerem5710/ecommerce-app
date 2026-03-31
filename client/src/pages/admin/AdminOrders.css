@@ -1,0 +1,123 @@
+.admin-orders-page {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #222;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.back-button {
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover,
+.back-button:focus {
+    background-color: #005bb5;
+    outline: none;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: #444;
+}
+
+.filter-input {
+    padding: 0.4rem 0.75rem;
+    font-size: 1rem;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    width: 150px;
+    transition: border-color 0.3s ease;
+}
+
+.filter-input:focus {
+    border-color: #0070f3;
+    outline: none;
+}
+
+.btn {
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover,
+.btn:focus {
+    background-color: #005bb5;
+    outline: none;
+}
+
+.clear-filter-btn {
+    background-color: #666;
+}
+
+.clear-filter-btn:hover,
+.clear-filter-btn:focus {
+    background-color: #444;
+}
+
+.loading-text,
+.error-text,
+.empty-text {
+    font-size: 1.1rem;
+    margin-top: 2rem;
+    color: #666;
+}
+
+.error-text {
+    color: #d93025;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.order-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    text-align: left;
+}
+
+.order-card p {
+    margin: 0.3rem 0;
+}
+
+.order-card ul {
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+    color: #555;
+}
