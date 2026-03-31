@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import categoryService from '../../services/categoryService';
 
+import './AdminProductCreate.css';
+
 const AdminProductCreate = () => {
     const navigate = useNavigate();
     const [product, setProduct] = useState({
@@ -75,30 +77,32 @@ const AdminProductCreate = () => {
     };
 
     return (
-        <div style={{ padding: '1rem' }}>
-            <h2>Create New Product</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <div style={{ maxWidth: '400px' }}>
-                <label>
+        <div className="admin-product-create-page">
+            <h2 className="page-heading">Create New Product</h2>
+            {error && <p className="error-message">{error}</p>}
+            <div className="form-container">
+                <label className="form-label">
                     Name:
                     <input
                         type="text"
                         name="name"
                         value={product.name}
                         onChange={handleChange}
-                        style={{ width: '100%', marginBottom: '0.5rem' }}
+                        className="input-field"
+                        placeholder="Product name"
                     />
                 </label>
-                <label>
+                <label className="form-label">
                     Description:
                     <textarea
                         name="description"
                         value={product.description}
                         onChange={handleChange}
-                        style={{ width: '100%', marginBottom: '0.5rem' }}
+                        className="textarea-field"
+                        placeholder="Product description"
                     />
                 </label>
-                <label>
+                <label className="form-label">
                     Price:
                     <input
                         type="number"
@@ -106,36 +110,39 @@ const AdminProductCreate = () => {
                         value={product.price}
                         onChange={handleChange}
                         step="0.01"
-                        style={{ width: '100%', marginBottom: '0.5rem' }}
+                        className="input-field"
+                        placeholder="0.00"
                     />
                 </label>
-                <label>
+                <label className="form-label">
                     Stock:
                     <input
                         type="number"
                         name="stock"
                         value={product.stock}
                         onChange={handleChange}
-                        style={{ width: '100%', marginBottom: '0.5rem' }}
+                        className="input-field"
+                        placeholder="0"
                     />
                 </label>
-                <label>
+                <label className="form-label">
                     Image URL:
                     <input
                         type="text"
                         name="image_url"
                         value={product.image_url}
                         onChange={handleChange}
-                        style={{ width: '100%', marginBottom: '0.5rem' }}
+                        className="input-field"
+                        placeholder="https://example.com/image.jpg"
                     />
                 </label>
-                <label>
+                <label className="form-label">
                     Category:
                     <select
                         name="category_id"
                         value={product.category_id}
                         onChange={handleChange}
-                        style={{ width: '100%', marginBottom: '0.5rem' }}
+                        className="select-field"
                     >
                         <option value="">Select a category</option>
                         {categories.map((cat) => (
@@ -145,12 +152,22 @@ const AdminProductCreate = () => {
                         ))}
                     </select>
                 </label>
-                <button onClick={handleSave} disabled={loading} style={{ marginRight: '1rem' }}>
-                    {loading ? 'Saving...' : 'Save'}
-                </button>
-                <button onClick={handleCancel} disabled={loading}>
-                    Cancel
-                </button>
+                <div className="button-group">
+                    <button
+                        onClick={handleSave}
+                        disabled={loading}
+                        className="btn save-btn"
+                    >
+                        {loading ? 'Saving...' : 'Save'}
+                    </button>
+                    <button
+                        onClick={handleCancel}
+                        disabled={loading}
+                        className="btn cancel-btn"
+                    >
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     );

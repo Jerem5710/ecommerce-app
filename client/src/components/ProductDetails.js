@@ -4,6 +4,11 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 
+// Import Add to Cart icon as React component
+import { ReactComponent as AddToCartIcon } from '../assets/images/icons/add-to-cart.svg';
+
+import './ProductDetails.css';
+
 const ProductDetails = () => {
     const { productId } = useParams();
     const navigate = useNavigate();
@@ -28,7 +33,6 @@ const ProductDetails = () => {
         };
 
         fetchProduct();
-        // Refresh the cart to ensure it's up-to-date (enable add-to-cart button)
         if (refreshCart) {
             refreshCart();
         }
@@ -39,13 +43,11 @@ const ProductDetails = () => {
             alert('Please log in to add items to your cart.');
             return;
         }
-        console.log('Current cart state before add:', cart);
         if (!cart) {
             alert('Loading cart, please try again shortly.');
             return;
         }
         if (loading) {
-            // Prevent duplicate submissions
             return;
         }
         setLoading(true);
@@ -55,7 +57,6 @@ const ProductDetails = () => {
                 { productId, quantity },
                 { withCredentials: true }
             );
-            // Refresh cart after adding item
             const updatedCartRes = await axios.get(
                 `${process.env.REACT_APP_API_URL}/carts/${user.id}`,
                 { withCredentials: true }
@@ -71,7 +72,6 @@ const ProductDetails = () => {
     };
 
     const handleBack = () => {
-        // Navigate back to product list, restoring scroll position if available
         const scrollPos = location.state?.scrollPosition || 0;
         navigate('/products', { state: { scrollPosition: scrollPos } });
     };
@@ -83,31 +83,48 @@ const ProductDetails = () => {
     const formattedPrice = isNaN(price) ? 'N/A' : price.toFixed(2);
 
     return (
-        <div style={{ padding: '1rem' }}>
-            <button onClick={handleBack} style={{ marginBottom: '1rem' }}>Back to Products</button>
-            <img
-                src={product.image_url}
-                alt={product.name}
-                style={{ maxWidth: '300px', objectFit: 'contain' }}
-            />
-            <h2>{product.name}</h2>
-            <p>{product.description}</p>
-            <p><strong>Price:</strong> ${formattedPrice}</p>
-            <div>
-                <label>
-                    Quantity:
-                    <input
-                        type="number"
-                        min="1"
-                        value={quantity}
-                        onChange={(e) => setQuantity(Number(e.target.value))}
-                        style={{ width: '50px', marginLeft: '0.5rem' }}
-                    />
-                </label>
-            </div>
-            <button onClick={handleAddToCart} style={{ marginTop: '1rem' }} disabled={loading || !cart}>
-                {loading ? 'Adding...' : 'Add to Cart'}
+        <div className="product-details-container">
+            <button onClick={handleBack} className="back-button">
+                &larr; Back to Products
             </button>
+            <div className="product-details-content">
+                <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="product-image"
+                />
+                <div className="product-info">
+                    <h2 className="product-name">{product.name}</h2>
+                    <p className="product-description">{product.description}</p>
+                    <p className="product-price">
+                        <strong>Price:</strong> ${formattedPrice}
+                    </p>
+                    <div className="quantity-container">
+                        <label htmlFor="quantity-input">Quantity:</label>
+                        <input
+                            id="quantity-input"
+                            type="number"
+                            min="1"
+                            value={quantity}
+                            onChange={(e) => setQuantity(Number(e.target.value))}
+                            className="quantity-input"
+                        />
+                    </div>
+                    <button
+                        onClick={handleAddToCart}
+                        className="add-to-cart-button"
+                        disabled={loading || !cart}
+                    >
+                        {loading ? (
+                            'Adding...'
+                        ) : (
+                            <>
+                                <AddToCartIcon className="add-to-cart-icon" /> Add to Cart
+                            </>
+                        )}
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };

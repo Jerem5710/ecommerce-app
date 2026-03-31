@@ -6,6 +6,11 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import {ReactComponent as PayNowIcon} from '../assets/images/icons/dollar.svg';
+import {ReactComponent as EmptyCartIcon} from '../assets/images/icons/cart-empty.svg';
+
+import './Checkout.css';
+
 const stripePromise = loadStripe('pk_test_51TCPQuAtHJsynMrL6EPPMSkSyVwD0cvYj4YB1dAQMFvwxJSqSPlh21DdKPRca18X50dGqdXnmf6Yx8pLGtrt5JQ700WFz967g4'); // Replace with your Stripe publishable key
 
 const CheckoutForm = () => {
@@ -40,13 +45,11 @@ const CheckoutForm = () => {
         }
 
         try {
-            console.log('Creating payment intent for amount:', totalAmount * 100);
             const paymentIntentRes = await axios.post(
                 `${process.env.REACT_APP_API_URL}/carts/${cart.id}/checkout`,
                 { paymentDetails: { amount: totalAmount * 100 } },
                 { withCredentials: true }
             );
-            console.log('Payment intent response:', paymentIntentRes.data);
 
             const clientSecret = paymentIntentRes.data.clientSecret;
 
@@ -54,13 +57,10 @@ const CheckoutForm = () => {
                 payment_method: { card: elements.getElement(CardElement) },
             });
 
-            console.log('Payment result:', paymentResult);
-
             if (paymentResult.error) {
                 setError(paymentResult.error.message);
                 setProcessing(false);
             } else if (paymentResult.paymentIntent.status === 'succeeded') {
-                console.log('Payment succeeded, showing success alert');
                 setSucceeded(true);
                 setProcessing(false);
                 setShowSuccessAlert(true);
@@ -72,7 +72,6 @@ const CheckoutForm = () => {
                 }, 3000);
             }
         } catch (err) {
-            console.error('Payment failed:', err);
             setError('Payment failed. Please try again.');
             setProcessing(false);
         }
@@ -91,7 +90,6 @@ const CheckoutForm = () => {
             setCartCleared(true);
             setProcessing(false);
         } catch (err) {
-            console.error('Failed to clear cart:', err);
             setError('Failed to clear cart. Please try again.');
             setProcessing(false);
         }
@@ -107,9 +105,10 @@ const CheckoutForm = () => {
 
     if (!cart || !cart.items.length || cartCleared) {
         return (
-            <div style={{ padding: '1rem' }}>
-                <p>Your cart is empty.</p>
-                <button onClick={handleBack} style={{ marginTop: '1rem' }}>
+            <div className="empty-cart-container">
+                <EmptyCartIcon className="empty-cart-icon" aria-label="Empty cart icon" />
+                <p className="empty-cart-text">Your cart is empty.</p>
+                <button onClick={handleBack} className="btn back-btn">
                     Back to Products
                 </button>
             </div>
@@ -119,50 +118,42 @@ const CheckoutForm = () => {
     return (
         <>
             {showSuccessAlert && (
-                <div style={{
-                    position: 'fixed',
-                    top: '1rem',
-                    right: '1rem',
-                    backgroundColor: '#4BB543',
-                    color: 'white',
-                    padding: '1rem 1.5rem',
-                    borderRadius: '5px',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-                    zIndex: 1000,
-                    fontWeight: 'bold',
-                    fontSize: '1rem',
-                    animation: 'fadein 0.5s ease-in-out'
-                }}>
+                <div className="payment-success-alert" role="alert">
                     Payment successful!
                 </div>
             )}
-            <form onSubmit={handleSubmit} style={{ padding: '1rem' }}>
-                <button type="button" onClick={handleBack} style={{ marginBottom: '1rem' }}>
+            <form onSubmit={handleSubmit} className="checkout-form">
+                <button type="button" onClick={handleBack} className="btn back-btn">
                     Back to Product Details
                 </button>
-                <h2>Checkout</h2>
-                <ul>
+                <h2 className="checkout-heading">Checkout</h2>
+                <ul className="cart-items-list">
                     {cart.items.map(({ id, name, price, quantity }) => (
-                        <li key={id}>
+                        <li key={id} className="cart-item">
                             {name} x {quantity} = ${(parseFloat(price) * quantity).toFixed(2)}
                         </li>
                     ))}
                 </ul>
-                <h3>Total: ${totalAmount.toFixed(2)}</h3>
-                <CardElement />
-                {error && <div style={{ color: 'red' }}>{error}</div>}
-                <button type="submit" disabled={!stripe || processing || succeeded} style={{ marginRight: '1rem' }}>
-                    {processing ? 'Processing...' : 'Pay Now'}
-                </button>
-                <button
-                    type="button"
-                    onClick={handleClearCart}
-                    disabled={processing}
-                    style={{ backgroundColor: '#d9534f', color: 'white', border: 'none', padding: '0.5rem 1rem', cursor: 'pointer' }}
-                >
-                    {processing ? 'Clearing...' : 'Clear Cart'}
-                </button>
-                {succeeded && !showSuccessAlert && <p>Payment succeeded!</p>}
+                <h3 className="total-amount">Total: ${totalAmount.toFixed(2)}</h3>
+                <div className="card-element-container">
+                    <CardElement options={{ hidePostalCode: true }} />
+                </div>
+                {error && <div className="error-message">{error}</div>}
+                <div className="button-group">
+                    <button type="submit" disabled={!stripe || processing || succeeded} className="btn pay-now-btn">
+                        <PayNowIcon className="btn-icon" aria-hidden="true" />
+                        {processing ? 'Processing...' : 'Pay Now'}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleClearCart}
+                        disabled={processing}
+                        className="btn clear-cart-btn"
+                    >
+                        {processing ? 'Clearing...' : 'Clear Cart'}
+                    </button>
+                </div>
+                {succeeded && !showSuccessAlert && <p className="payment-succeeded-text">Payment succeeded!</p>}
             </form>
         </>
     );

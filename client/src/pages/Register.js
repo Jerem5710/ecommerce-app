@@ -3,6 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import authService from '../services/authService';
 import { AuthContext } from '../context/AuthContext';
 
+// Import store logo and icons
+import { ReactComponent as StoreLogo } from '../assets/images/logos/Luigi-Jer.svg';
+import { ReactComponent as RegisterIcon } from '../assets/images/icons/register.svg';
+import { ReactComponent as LoginIcon } from '../assets/images/icons/login.svg';
+
+import './Register.css';
+
 const Register = () => {
     const { user } = useContext(AuthContext);
     const [username, setUsername] = React.useState('');
@@ -29,42 +36,59 @@ const Register = () => {
     };
 
     return (
-        <div>
-            <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Username:</label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Email:</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">Register</button>
-            </form>
-            <p>
-                Already have an account? <Link to="/login">Login here</Link>
-            </p>
+        <div className="register-page">
+            <div className="register-container">
+                <StoreLogo className="store-logo" aria-label="Store Logo" />
+                <h2 className="register-heading">Register</h2>
+                <form onSubmit={handleSubmit} className="register-form">
+                    <div className="form-group">
+                        <label htmlFor="username">Username:</label>
+                        <input
+                            id="username"
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                            className="input-field"
+                            placeholder="Enter your username"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="email">Email:</label>
+                        <input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="input-field"
+                            placeholder="Enter your email"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password">Password:</label>
+                        <input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="input-field"
+                            placeholder="Enter your password"
+                        />
+                    </div>
+                    {error && <p className="error-message">{error}</p>}
+                    <button type="submit" className="btn register-btn">
+                        <RegisterIcon className="btn-icon" /> Register
+                    </button>
+                </form>
+                <p className="login-text">
+                    Already have an account?{' '}
+                    <Link to="/login" className="login-link">
+                        <LoginIcon className="btn-icon" /> Login here
+                    </Link>
+                </p>
+            </div>
         </div>
     );
 };

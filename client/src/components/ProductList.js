@@ -3,6 +3,11 @@ import axios from 'axios';
 import Product from './Product';
 import { Link, useLocation } from 'react-router-dom';
 
+import { ReactComponent as SearchIcon } from '../assets/images/icons/search.svg';
+import { ReactComponent as ClearIcon } from '../assets/images/icons/close.svg';
+
+import './ProductList.css';
+
 const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [error, setError] = useState(null);
@@ -27,7 +32,6 @@ const ProductList = () => {
     }, [searchTerm]);
 
     useEffect(() => {
-        // Restore scroll position if available
         if (location.state && location.state.scrollPosition) {
             window.scrollTo(0, location.state.scrollPosition);
         }
@@ -36,46 +40,37 @@ const ProductList = () => {
     if (error) return <p>{error}</p>;
 
     return (
-        <div>
-            <h2>Products</h2>
+        <div className="user-product-list-container">
+            <h2>Browse Products</h2>
 
-            {/* Search input with clear button */}
-            <div style={{ marginBottom: '1rem', position: 'relative', maxWidth: '300px' }}>
+            <div className="search-bar">
+                <SearchIcon className="search-icon" />
                 <input
                     type="text"
                     placeholder="Search products..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ width: '100%', paddingRight: '24px' }}
+                    className="search-input"
+                    aria-label="Search products"
                 />
                 {searchTerm && (
                     <button
                         onClick={() => setSearchTerm('')}
-                        style={{
-                            position: 'absolute',
-                            right: '4px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            background: 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontSize: '16px',
-                            lineHeight: '1',
-                        }}
+                        className="clear-button"
                         aria-label="Clear search"
                     >
-                        &times;
+                        <ClearIcon className="clear-icon" />
                     </button>
                 )}
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            <div className="user-products-grid">
                 {products.map((product) => (
                     <Link
                         key={product.id}
                         to={`/products/${product.id}`}
                         state={{ scrollPosition: window.pageYOffset }}
-                        style={{ textDecoration: 'none', color: 'inherit' }}
+                        className="product-link"
                     >
                         <Product product={product} />
                     </Link>
